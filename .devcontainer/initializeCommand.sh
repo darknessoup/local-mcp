@@ -12,5 +12,6 @@ docker build -f ${DEV_CONTAINER_FOLDER}/Dockerfile \
     --build-arg USERNAME="${USER}" \
     --build-arg USER_UID="$(id -u)" \
     --build-arg USER_GID="$(id -g)" \
+    --build-arg HOME="${HOME}" \
     -t ${DOCKER_IMAGE_NAME} .
 

@@ -1,12 +1,12 @@
-FROM "ubuntu:20.04"
+FROM "ubuntu:24.04"
 RUN apt-get update
 
 ARG USERNAME
 ARG USER_UID
 ARG USER_GID
+ARG HOME
+ENV HOME=${HOME}
 ENV USERNAME=${USERNAME}
-
-USER root
 
 # Installing majority of packages
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
@@ -17,19 +17,38 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
      sudo \
      nano \
      vim \
-     libtinfo5 \
      ca-certificates \
-     tzdata \
-     update-inetd \
      apt-utils \
-     less \
-     gnupg \
      curl \
      wget \
      gedit \
      dpkg \
      python3 \
-     python3-pip
+     python3-pip \
+     nodejs \
+     npm \
+     && rm -rf /var/lib/apt/lists/*
+ 
+ # Install uvenv    
+# Copy the script into the image
+COPY .devcontainer/scripts/install.sh /tmp/install.sh
+
+# Make it executable and run it
+RUN chmod +x /tmp/install.sh && /tmp/install.sh
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+ENV PATH="$HOME/.local/bin:${PATH}"
+
+ENV PATH="/usr/local/bin:${PATH}"
+# Make it executable and run it
+
+ # Optional: Pre-install MCP servers (can also be deferred to runtime)
+#  RUN uv install mcp-server-sqlite && \
+#      uv install duckduckgo-mcp-server
+ 
+ # Install @modelcontextprotocol/server-filesystem globally if preferred
+ # or use npx at runtime instead
+RUN npm install -g @modelcontextprotocol/server-filesystem
 
 RUN locale-gen en_US.UTF-8
 
@@ -56,8 +75,12 @@ RUN if getent passwd $USER_UID > /dev/null; then userdel -r $(getent passwd $USE
      && apt-get install -y sudo \
      && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
      && chmod 0440 /etc/sudoers.d/$USERNAME
+     
 # Make Go available in PATH
 ENV PATH="/usr/local/go/bin:${PATH}"
+
+RUN go install github.com/mark3labs/mcphost@latest
+
 
 USER $USERNAME
 
