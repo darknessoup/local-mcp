@@ -15,6 +15,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_NAME="$1"
 
 PROJ_PATH=$SCRIPT_DIR/servers/$PROJECT_NAME
+PUB_PATH=$SCRIPT_DIR/public_scripts
 
 # Change into the output directory
 uv init $PROJ_PATH
@@ -35,14 +36,25 @@ else
   touch ${PROJECT_NAME}.py # create the new file if it doesn't exist
 fi
 
-# add the default mcp imports, mcp name, and main func
-echo "from typing import Any" > ${PROJECT_NAME}.py # <-- Replaces all current content in file with this line
-echo "from mcp.server.fastmcp import FastMCP" >> ${PROJECT_NAME}.py
-echo "mcp = FastMCP(\"${PROJECT_NAME}\")" >> ${PROJECT_NAME}.py
-echo "# Add your tools here" >> ${PROJECT_NAME}.py  # empty line to separate the code blocks
-echo "@mcp.tool()" >> ${PROJECT_NAME}.py  # empty line to separate the code blocks
-echo "#    async def add(x: float, y: float) -> float:" >> ${PROJECT_NAME}.py  # empty line to separate the code blocks
-echo "        return x + y" >> ${PROJECT_NAME}.py  # empty line to separate the
-echo "if __name__ == \"__main__\":" >> ${PROJECT_NAME}.py
-echo "    # Initialize and run the server" >> ${PROJECT_NAME}.py
-echo "    mcp.run(transport='stdio')" >> ${PROJECT_NAME}.py
+if [[ -d "${PUB_PATH}/${PROJECT_NAME}" ]]; then
+  echo "Copying existing public_script to project directory..."
+  cp -r "${PUB_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.py" . # copy the file from public_scripts if it exists
+  if [[ -f "${PUB_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.py" ]]; then
+    echo "File copied successfully."
+  else
+    echo "File not found in public_scripts directory."
+  fi
+else
+  # add the default mcp imports, mcp name, and main func
+  echo "from typing import Any" > ${PROJECT_NAME}.py # <-- Replaces all current content in file with this line
+  echo "from mcp.server.fastmcp import FastMCP" >> ${PROJECT_NAME}.py
+  echo "mcp = FastMCP(\"${PROJECT_NAME}\")" >> ${PROJECT_NAME}.py
+  echo "# Add your tools here" >> ${PROJECT_NAME}.py  # empty line to separate the code blocks
+  echo "#@mcp.tool()" >> ${PROJECT_NAME}.py  # empty line to separate the code blocks
+  echo "#    async def add(x: float, y: float) -> float:" >> ${PROJECT_NAME}.py  # empty line to separate the code blocks
+  echo "#    return x + y" >> ${PROJECT_NAME}.py  # empty line to separate the
+  echo "if __name__ == \"__main__\":" >> ${PROJECT_NAME}.py
+  
+  echo "    # Initialize and run the server" >> ${PROJECT_NAME}.py
+  echo "    mcp.run(transport='stdio')" >> ${PROJECT_NAME}.py
+fi
