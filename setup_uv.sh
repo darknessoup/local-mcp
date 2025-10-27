@@ -42,7 +42,7 @@ echo "mcp = FastMCP(\"${PROJECT_NAME}\")" >> ${PROJECT_NAME}.py
 echo "# Add your tools here" >> ${PROJECT_NAME}.py  # empty line to separate the code blocks
 echo "@mcp.tool()" >> ${PROJECT_NAME}.py  # empty line to separate the code blocks
 echo "#    async def add(x: float, y: float) -> float:" >> ${PROJECT_NAME}.py  # empty line to separate the code blocks
-echo "        return x + y" >> ${PROJECT_NAME}.py  # empty line to separate the
-echo "if __name__ == \"__main__\":" >> ${PROJECT_NAME}.py
-echo "    # Initialize and run the server" >> ${PROJECT_NAME}.py
-echo "    mcp.run(transport='stdio')" >> ${PROJECT_NAME}.py
+echo "#       return x + y" >> ${PROJECT_NAME}.py  # empty line to separate the
+echo "#if __name__ == \"__main__\":" >> ${PROJECT_NAME}.py
+echo "    #Initialize and run the server" >> ${PROJECT_NAME}.py
+echo "    #mcp.run(transport='stdio')" >> ${PROJECT_NAME}.py
