@@ -15,6 +15,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_NAME="$1"
 
 PROJ_PATH=$SCRIPT_DIR/servers/$PROJECT_NAME
+PUB_PATH=$SCRIPT_DIR/public_scripts
 
 # Change into the output directory
 uv init $PROJ_PATH
